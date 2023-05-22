@@ -9,7 +9,7 @@ Go to Rstudio instance:
 Enter username and password.
 
 
-### Install conda
+### Conda first-time setup
 
 ```
 cd $HOME
@@ -20,7 +20,7 @@ $HOME/miniconda3/bin/conda init
 
 Now you have to log out and log back in.
 
-### Install mamba
+#### Install mamba and set up channels
 
 ```
 conda install -n base -y -c conda-forge mamba
@@ -29,13 +29,36 @@ conda config --add channels bioconda
 conda config --add channels conda-forge
 ```
 
+### Useful conda commands
+
+[Conda cheatsheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
+
+List your environments:
+
+```
+conda info --envs
+```
+
+Delete an environment:
+
+```
+conda remove -n [envname] --all
+```
+
+Use mamba for installing and creating
+
+```
+mamba install numpy
+mamba create -n newenv python numpy pandas
+```
+
+
 ### Create teabiscuit environment:
 
 ```
 git clone https://github.com/nixonlab/teabiscuit.git
 mamba env create -f teabiscuit/00-setup/teabiscuit.yml
 conda activate teabiscuit
-pip install git+https://github.com/mlbendall/telescope.git
 telescope --version
 ```
 
