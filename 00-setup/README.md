@@ -57,7 +57,7 @@ mamba create -n newenv python numpy pandas
 
 ```
 git clone https://github.com/nixonlab/teabiscuit.git
-mamba env create -f teabiscuit/00-setup/teabiscuit.yml
+conda env create -f teabiscuit/00-setup/teabiscuit.yml
 conda activate teabiscuit
 telescope --version
 ```
