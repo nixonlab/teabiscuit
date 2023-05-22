@@ -13,9 +13,9 @@
 | 11:00 AM - 11:30 AM  |   Coffee break |  |
 | 11:30 AM - 1:00 PM  |   Retrotranscriptome-wide association studies (rTWAS) | Dr. Rodrigo Duarte |
 | 1:00 PM - 2:00 PM  |   Pizza lunch |  |
-| 2:00 PM - 3:30 PM  |   Telescope Retrotranscriptomic Workshop: Introduction to Gene Alignment + Running | Matthew |
+| 2:00 PM - 3:30 PM  |   [RNA-seq workflow](./01-rnaseq_workflow/README.md) | Matthew |
 | 3:30 PM - 4:00 PM  |   British Tea and Biscuits |  |
-| 4:00 PM - 5:00 PM  |    Telescope Retrotranscriptomic Workshop: Running Telescope and STAR | Matthew |
+| 4:00 PM - 5:00 PM  |   [Running Telescope](./02-telescope/README.md) | Matthew |
 | 5:00 PM - TBD: Informal Happy Hour in the UES (optional) |  |
 
 ### Tuesday May 23 – Practicals I: Downstream Bulk Retrotranscriptomics

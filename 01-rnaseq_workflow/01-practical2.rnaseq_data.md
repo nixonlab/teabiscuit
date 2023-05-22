@@ -1,5 +1,7 @@
 # RNA-seq data practical
 
+### Search for data in NCBI GEO
+
 We are going to use NCBI Gene Expression Omnibus to identify possible datasets of interest.
 
 Go to the [GEO homepage](https://www.ncbi.nlm.nih.gov/geo/) and search for "alzheimer's".
@@ -12,8 +14,12 @@ We have a lot of results! But we can rule out many of them without even reading 
 
 We should see 227 results (as of May 22, 2023).
 
+#### Discussion questions
+
 1. Are all the search results useful for our question?
 2. Do you notice any similaries among search results?
+
+### Cross-reference with SRA
 
 We are going to look at one study in-depth to see if we can access the data.
 
@@ -23,7 +29,11 @@ Click on the SRA Run Selector link on the bottom of the page.
 
 ![](./runselector.png)
 
-Normally we can download the run selector table and this file can be directly used in one of our snakemake pipelines. However, for this lab we are just going to download data from one run using the sra-toolkit.
+Under normal circumstances, we would want to download and run all the runs and samples from this study. In that case, we can download the entire run selector table - or just select accessions - and use this file directly in a snakemake pipeline.
+
+### Download using `sra-toolkit`
+
+For the purposes of this lab, we are going to go through the process of downloading and extracting FASTQ data from a single run using the sra-toolkit.
 
 First, activate the conda environment to load the software:
 
@@ -66,7 +76,7 @@ The split-3 option is important if you have paired-end sequencing, or if you don
                                    reads in the spot are ignored.
 ```
 
-I recommend using these just for formatting the FASTQ files:
+I recommend using these for formatting the FASTQ files:
 
 ```
 -F|--origfmt                       Defline contains only original sequence name
@@ -78,4 +88,11 @@ Extract fastq files using:
 ```bash
 fastq-dump -F --split-3 --defline-qual '+' SRR19243439/SRR19243439.sra
 ```
+
+#### Questions
+
+3. Is this a single-end or paired-end dataset?
+4. What does the `--defline-qual '+'` part of the command do?
+5. How many reads are in each file? Does this match the number reported by `fastq-dump`?
+
 
