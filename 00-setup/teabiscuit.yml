@@ -18,3 +18,4 @@ dependencies:
   - samtools
   - sra-tools
   - star
+  - telescope
