@@ -1,5 +1,20 @@
 # Telescope
 
+##### Before starting today, you may need to:
+
+Sync your copy of the teabiscuit repository using `git`
+
+```bash
+cd ~/teabiscuit
+git pull
+```
+
+Activate your teabiscuit environment that we made on Monday:
+
+```bash
+conda activate teabiscuit
+```
+
 ## Alignment
 
 ### SAM/BAM files
@@ -17,9 +32,6 @@ CRAM files are able to achieve better compression than BAM files by storing read
 
 Activate teabiscuit environment:
 
-```bash
-conda activate teabiscuit
-```
 
 ```bash
 samtools view ENCSR693KOP/Aligned.out.bam | less -S
@@ -49,5 +61,41 @@ Go to [https://software.broadinstitute.org/software/igv/download](https://softwa
 
 Follow the directions for your OS. I recommend the "Java included" versions unless you have a good reason not to.
 
+### Choose Genome
 
-PTPRC (CD45, microglia marker)
+We are going to be viewing annotations and alignments for hg38
+
+![](./igv_genome.png)
+
+### Load data tracks
+
+> **tl;dr** Download this IGV session file locally [igv_session.STAR.xml](./igv_session.STAR.xml) and open it using "File > Open Session..."
+
+Data tracks are loaded using the "File" menu. Data can be loaded from a local file (on your computer) using "File > Load from File..."; from a URL ("Load from URL...") or from a public server ("Load from server...").
+
+We are going to load from a URL so that you don't have to download all the files locally. The tracks we will load are:
+
+##### GENCODE annotation v38
+
+URL: `http://nixonlab-cluster.hopto.org/efs/projects/teabiscuit.git/02-telescope/gencode.v38/gencode.v38.ALL.annotation.gtf.gz`
+Index: `http://nixonlab-cluster.hopto.org/efs/projects/teabiscuit.git/02-telescope/gencode.v38/gencode.v38.ALL.annotation.gtf.gz.tbi`
+
+##### Telescope annotation
+
+URL: `http://nixonlab-cluster.hopto.org/efs/projects/teabiscuit.git/02-telescope/retro.hg38.v1.gtf`
+
+##### Alignment (BAM file)
+
+URL: `http://nixonlab-cluster.hopto.org/efs/projects/teabiscuit.git/02-telescope/ENCSR693KOP/Aligned.out.sortedByCoord.bam.bai`
+Index: `http://nixonlab-cluster.hopto.org/efs/projects/teabiscuit.git/02-telescope/ENCSR693KOP/Aligned.out.sortedByCoord.bam`
+
+##### RepeatMasker tracks
+
+Go to "File > Load From server"
+Navigate the nested structure with the drop-downs
+
+![](./igv_datasets.png)
+
+
+
+
