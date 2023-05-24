@@ -31,33 +31,28 @@
 | 2:30 PM - 3:30 PM  |   [Day 2 PM](https://rodrigoduarte88.github.io/teabiscuit_tutorial/) Performing rTWAS |  Dr. Rodrigo Duarte |
 | 3:30 PM - 4:00 PM  |   Indian Tea and Biscuits |  |
 | 4:00 PM - 4:30 PM  |   Performing rTWAS |  Dr. Rodrigo Duarte |
-| 8:00 PM  |   Meet at [Sour Mouse](https://www.sourmousenyc.com/) (East Village) for drinks and games (optional) |  |
 
 ### Wednesday May 24 – Practicals II: Single cell Retrotranscriptome
 
 | | | |
 | --- | --- | --- |
 | 9:00 AM - 9:20 AM  |   Coffee |  |
-| 9:30 AM - 11:30 AM  |   STAR and Telescope |  |
-| 11:30 AM - 12:00 PM  |   Coffee break |  |
-| 12:00 PM - 1:00 PM  |   Stellarscope |  |
+| 9:30 AM - 10:45 AM  |   STAR and Telescope | Matthew |
+| 10:45 AM - 11:30 AM  |   Coffee break |  |
+| 11:30 AM - 1:00 PM  |   Stellarscope | Matthew |
 | 1:00 PM - 2:30 PM  |   Lunch |  |
-| 2:30 PM - 3:30 PM  |   Stellarscope downstream |  |
+| 2:30 PM - 3:30 PM  |   Stellarscope downstream | Matthew |
 | 3.30 PM - 4.00 PM  |   Chinese Tea and Biscuits  |  |
-| 4:00 PM - 5:00 PM  |   De novo cell-type annotation |  |
-| 5:00 PM - TBD: Highline walk (optional)  |  |
+| 4:00 PM - 5:00 PM  |   Stellarscope downstream | Matthew |
+| 8:00 PM - ??? |   Meet at [Sour Mouse](https://www.sourmousenyc.com/) (East Village) for drinks and games (optional) |  |
 
-### Thursday May 25 – Discussion & Brainstorming
+
+### Thursday May 25
 
 | | | |
 | --- | --- | --- |
-| 9:00 AM - 9:20 AM  |   Coffee |  |
-| 9:30 AM - 10:30 PM  |   Alzheimer’s grant (Dr. Douglas Nixon) |  |
-| 10:30 AM - 11:30 AM  |   Future grant discussion (Led by Doug) |  |
-| 11:30 AM - 12:30 PM  |   Action items and goal-setting for resubmission |  |
-| 1:00 PM - 2:30 PM  |   Lunch at Central Park  |  |
-| 2:30 PM -  TBD: NY Style Tea and Biscuits (Boba!) + Leisure time (Group walks to The Met) |  |
-| TBD - TBD: Group dinner at Secret Location |  |
+| 9:00 AM - ? | Enjoy NYC! |
+| 6:30 | Group dinner at Secret Location? |  |
 
 
 ### Friday May 26 – Discussion & Brainstorming
