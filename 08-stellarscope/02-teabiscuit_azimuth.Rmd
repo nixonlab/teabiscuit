@@ -1,0 +1,235 @@
+---
+title: "02-teabiscuit_azimuth"
+author: "Matthew Bendall"
+date: "2023-05-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(tidyverse)
+library(Seurat)
+library(SeuratData)
+library(Azimuth)
+require(patchwork)
+
+
+
+######################################################################
+# Run Azimuth
+######################################################################
+# source('azimuth20K/001-load_stellarscope.R')
+pbmc20K.pseudo <- readRDS('azimuth20K/pbmc20K.pseudo.rds')
+
+mapped <- Azimuth::RunAzimuth(
+  pbmc20K.pseudo,
+  reference = "pbmcref",
+  do.adt = TRUE,
+  )
+
+results <- list()
+if('impADT' %in% Assays(mapped)) {
+    results$impADT <- mapped[['impADT']]
+}
+if('ref.umap' %in% Reductions(mapped)) {
+    results$umap <- mapped[['ref.umap']]
+}
+
+results$pred.df <- mapped@meta.data %>%
+  tibble::rownames_to_column('cell') %>%
+  dplyr::select(
+    cell,
+    dplyr::matches('predicted.celltype.l\\d$'),
+    dplyr::matches('predicted.celltype.l\\d.score$'),
+    mapping.score
+  ) %>% as.data.frame
+
+saveRDS(results, file = 'azimuth20K/azimuth_results.rds')
+# rm(results)
+results <- readRDS('azimuth20K/azimuth_results.rds')
+
+pbmc20K.pseudo <- Seurat::AddAzimuthResults(pbmc20K.pseudo, filename='azimuth20K/azimuth_results.rds')
+pbmc20K.pseudo@meta.data$predicted.celltype.l1 <- results$pred.df$predicted.celltype.l1
+pbmc20K.pseudo@meta.data$predicted.celltype.l2 <- results$pred.df$predicted.celltype.l2
+pbmc20K.pseudo@meta.data$predicted.celltype.l3 <- results$pred.df$predicted.celltype.l3
+pbmc20K.pseudo@meta.data$predicted.celltype.l1.score <- results$pred.df$predicted.celltype.l1.score
+pbmc20K.pseudo@meta.data$predicted.celltype.l2.score <- results$pred.df$predicted.celltype.l2.score
+pbmc20K.pseudo@meta.data$predicted.celltype.l3.score <- results$pred.df$predicted.celltype.l3.score
+pbmc20K.pseudo@meta.data$mapping.score <- results$pred.df$mapping.score
+pbmc20K.pseudo@meta.data %>% head
+
+# Normalize
+pbmc20K.pseudo <- Seurat::NormalizeData(pbmc20K.pseudo, normalization.method = "LogNormalize", scale.factor = 10000)
+
+# Feature Selection
+pbmc20K.pseudo <- Seurat::FindVariableFeatures(pbmc20K.pseudo, selection.method = "vst", nfeatures = 5000)
+
+# scale all genes
+# pbmc20K.pseudo <- Seurat::ScaleData(pbmc20K.pseudo, features = rownames(pbmc20K.pseudo))
+# scale variable only
+pbmc20K.pseudo <- Seurat::ScaleData(pbmc20K.pseudo)
+
+
+
+Idents(object=pbmc20K.pseudo) <- "predicted.celltype.l1"
+
+# pdf('azimuth20K/pbmc20K.pseudo.mapped.l1.v2.pdf', width=6, height=6)
+nclust <- length(unique(pbmc20K.pseudo@meta.data$predicted.celltype.l1))
+DimPlot(pbmc20K.pseudo, group.by = "predicted.celltype.l1", label = TRUE, cols=Seurat::DiscretePalette(nclust, 'glasbey')) + NoAxes() + NoLegend() + theme(plot.title=element_blank())
+# dev.off()
+
+# pdf('azimuth20K/pbmc20K.pseudo.mapped.l2.v2.pdf', width=6, height=6)
+nclust <- length(unique(pbmc20K.pseudo@meta.data$predicted.celltype.l2))
+DimPlot(pbmc20K.pseudo, group.by = "predicted.celltype.l2", label = TRUE, cols=Seurat::DiscretePalette(nclust, 'glasbey')) + NoAxes() + NoLegend() + theme(plot.title=element_blank())
+# dev.off()
+
+# pdf('azimuth20K/pbmc20K.pseudo.mapped.l3.v2.pdf', width=6, height=6)
+nclust <- length(unique(pbmc20K.pseudo@meta.data$predicted.celltype.l3))
+DimPlot(pbmc20K.pseudo, group.by = "predicted.celltype.l3", label = TRUE) + NoAxes() + NoLegend() + theme(plot.title=element_blank())
+# dev.off()
+
+# pbmc20K.pseudo.markers <- FindAllMarkers(pbmc20K.pseudo, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+# pbmc20K.pseudo.markers$symbol <- pbmc20K.pseudo[['RNA']]@meta.features[pbmc20K.pseudo.markers$gene, 'symbol']
+# pbmc20K.pseudo.markers$feattype <- pbmc20K.pseudo[['RNA']]@meta.features[pbmc20K.pseudo.markers$gene, 'feattype']
+# pbmc20K.pseudo.markers$te_class <- pbmc20K.pseudo[['RNA']]@meta.features[pbmc20K.pseudo.markers$gene, 'te_class']
+# pbmc20K.pseudo.markers$te_family <- pbmc20K.pseudo[['RNA']]@meta.features[pbmc20K.pseudo.markers$gene, 'te_family']
+# pbmc20K.pseudo.markers$te_class[is.na(pbmc20K.pseudo.markers$te_class)] <- ''
+# pbmc20K.pseudo.markers$te_family[is.na(pbmc20K.pseudo.markers$te_family)] <- ''
+# pbmc20K.pseudo.markers.l1 <- pbmc20K.pseudo.markers
+# saveRDS(pbmc20K.pseudo.markers.l1, file = 'azimuth20K/pbmc20K.pseudo.markers.l1.rds')
+pbmc20K.pseudo.markers <- readRDS('azimuth20K/pbmc20K.pseudo.markers.l1.rds')
+
+
+
+herv_markers <- pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$te_class=='LTR',]
+
+nrow(herv_markers)
+# 43
+
+length(unique(herv_markers$gene))
+# 35
+
+# ERV316A3_2q22.2b is in CD4, CD8, and B
+# MER101-16p12.2a
+# "HARLEQUIN-1q32.1" B and DC
+
+fpcols <- c('#eeeeee99', viridis::viridis(8))
+
+b_all <- herv_markers[herv_markers$cluster == 'B', 'gene']
+lapply(b_all, function(x) herv_markers[herv_markers$gene == x,])
+b_x <- c('HERVH-22q13.1b', 'ERVLE-4q24e', 'MER61-1q23.1c')
+pdf('azimuth20K/b_markers.pdf', width=6, height=2)
+# png('azimuth20K/b_markers.png', width=6, height=2, units='in', res=600)
+FeaturePlot(pbmc20K.pseudo, b_x, cols=fpcols, ncol=3, raster=TRUE) & NoAxes() & NoLegend() & theme(plot.title=element_text(size=8))
+dev.off()
+
+mo_all <- herv_markers[herv_markers$cluster == 'Mono', 'gene']
+lapply(mo_all, function(x) herv_markers[herv_markers$gene == x,])
+pdf('azimuth20K/mo_markers.pdf', width=12, height=4)
+FeaturePlot(pbmc20K.pseudo, mo_all, cols=fpcols, ncol=6, raster=TRUE) & NoAxes() & NoLegend() & theme(plot.title=element_text(size=8))
+dev.off()
+
+dc_all <- herv_markers[herv_markers$cluster == 'DC', 'gene']
+lapply(dc_all, function(x) herv_markers[herv_markers$gene == x,])
+dc_x <- c("HERVH-10q23.31b", "HUERSP1-4q21.22", "PRIMA4-12p11.21b")
+pdf('azimuth20K/dc_markers.pdf', width=6, height=2)
+FeaturePlot(pbmc20K.pseudo, dc_x, cols=fpcols, ncol=3, raster=TRUE) & NoAxes() & NoLegend() & theme(plot.title=element_text(size=8))
+dev.off()
+
+nk_all <- herv_markers[herv_markers$cluster == 'NK', 'gene']
+lapply(nk_all, function(x) herv_markers[herv_markers$gene == x,])
+nk_x <- c("HERVH-12p13.31d", "PRIMA4-14q22.1", "LTR46-Xq11.1", "MER4-11p15.4a", "HERVH-7q11.23a", "MER101-12p13.31b", "HML6-19q13.43b")
+pdf('azimuth20K/nk_markers.pdf', width=14, height=2)
+FeaturePlot(pbmc20K.pseudo, nk_x, cols=fpcols, ncol=7, raster=TRUE) & NoAxes() & NoLegend() & theme(plot.title=element_text(size=8))
+dev.off()
+
+
+t4_all <- herv_markers[herv_markers$cluster == 'CD4 T', 'gene']
+lapply(t4_all, function(x) herv_markers[herv_markers$gene == x,])
+
+t8_all <- herv_markers[herv_markers$cluster == 'CD8 T', 'gene']
+lapply(t8_all, function(x) herv_markers[herv_markers$gene == x,])
+t8_x <- c('HERVFH21-1p36.23')
+pdf('azimuth20K/t8_markers.pdf', width=2, height=2)
+FeaturePlot(pbmc20K.pseudo, t8_x, cols=fpcols, ncol=1, raster=TRUE) & NoAxes() & NoLegend() & theme(plot.title=element_text(size=8))
+dev.off()
+
+tO_all <- herv_markers[herv_markers$cluster == 'other T', 'gene']
+lapply(tO_all, function(x) herv_markers[herv_markers$gene == x,])
+tO_x <- c("LTR19-12p13.31", "HERVS71-8p23.1b")
+pdf('azimuth20K/tO_markers.pdf', width=4, height=2)
+FeaturePlot(pbmc20K.pseudo, tO_x, cols=fpcols, ncol=2, raster=TRUE) & NoAxes() & NoLegend() & theme(plot.title=element_text(size=8))
+dev.off()
+
+
+mul <- names(table(herv_markers$gene)[table(herv_markers$gene)>1])
+pdf('azimuth20K/mul_markers.pdf', width=10, height=2)
+FeaturePlot(pbmc20K.pseudo, mul, cols=fpcols, ncol=5, raster=TRUE) & NoAxes() & NoLegend() & theme(plot.title=element_text(size=8))
+dev.off()
+
+# ERV316A3-2q22.2b
+# HARLEQUIN-17q12
+# HARLEQUIN-1q32.1
+# MER101-16p12.2a
+# HERVH-6q23.1
+
+
+FeaturePlot(pbmc20K.pseudo, unique(c(t4_all, t8_all, tO_all)), cols=fpcols) & NoAxes() & NoLegend()
+
+
+
+
+
+
+top10 <- pbmc20K.pseudo.markers %>%
+    group_by(cluster) %>%
+    top_n(n = 10, wt = avg_log2FC)
+DoHeatmap(pbmc20K.pseudo, features = top10$gene) + NoLegend()
+
+pdf(file='feature.pdf', paper='USr')
+FeaturePlot(pbmc20K.pseudo, c('HERVH-10q23.31b', 'MER34B-1q23.3b', 'HARLEQUIN-17q12', 'L1FLnI-7q36.1m'))
+dev.off()
+
+pbmc20K.pseudo.markers %>%
+    group_by(cluster) %>%
+    slice_max(n = 2, order_by = avg_log2FC)
+
+
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$gene == 'MER4-22q12.3',] # 0,1,7,10
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$gene == 'MER34B-1q23.3b',] # 0,7
+
+# CD14, LYZ	CD14+ Mono
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$symbol == 'CD14',] # 0,1,10,13,14
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$symbol == 'LYZ',] # 0,1,10,11,13,14
+
+# FCER1A, CST3	DC
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$symbol == 'FCER1A',] # 11,12
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$symbol == 'CST3',] #0,1,7,10,11,12,13,14
+
+# FCGR3A, MS4A7	FCGR3A+ Mono
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$symbol == 'FCGR3A',] # 7,9,15
+pbmc20K.pseudo.markers[pbmc20K.pseudo.markers$symbol == 'MS4A7',] # 0,7,14
+
+
+
+
+# data.frame(cellbc=rownames(pbmc20K.pseudo.mapped@meta.data), predicted.celltype.l1=pbmc20K.pseudo.mapped@meta.data$predicted.celltype.l1) %>%
+#     write.table(file='azimuth20K/pbmc20K.pseudo.mapped.l1.clusters.tsv', sep='\t', quote=F, row.names=F, col.names=F)
+#
+# data.frame(cellbc=rownames(pbmc20K.pseudo.mapped@meta.data), predicted.celltype.l2=pbmc20K.pseudo.mapped@meta.data$predicted.celltype.l2) %>%
+#     write.table(file='azimuth20K/pbmc20K.pseudo.mapped.l2.clusters.tsv', sep='\t', quote=F, row.names=F, col.names=F)
+#
+# data.frame(cellbc=rownames(pbmc20K.pseudo.mapped@meta.data), predicted.celltype.l3=pbmc20K.pseudo.mapped@meta.data$predicted.celltype.l3) %>%
+#     write.table(file='azimuth20K/pbmc20K.pseudo.mapped.l3.clusters.tsv', sep='\t', quote=F, row.names=F, col.names=F)
+#
+#
+# saveRDS(pbmc20K.pseudo.mapped, file = "azimuth20K/pbmc20K.pseudo.mapped.rds")
+
+# library(Azimuth)
+# Azimuth::AzimuthApp(reference = '/Users/bendall/OneDrive - med.cornell.edu/SharedProjects/stellarscope_methods/matthew/azimuth_refs')
+
+```
