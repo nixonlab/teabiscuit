@@ -38,12 +38,11 @@
 | | | |
 | --- | --- | --- |
 | 9:00 AM - 9:20 AM  |   Coffee |  |
-| 9:30 AM - 10:30 AM  |   Running Stellarscope and STARsolo |  |
-| 10:30 AM - 11:30 AM  |   Creating Seurat objects and adding TE count data to Seurat |  |
+| 9:30 AM - 11:30 AM  |   STAR and Telescope |  |
 | 11:30 AM - 12:00 PM  |   Coffee break |  |
-| 12:00 PM - 1:00 PM  |   Clustering and feature selection |  |
+| 12:00 PM - 1:00 PM  |   Stellarscope |  |
 | 1:00 PM - 2:30 PM  |   Lunch |  |
-| 2:30 PM - 3:30 PM  |   Cell-type annotation with Azimuth |  |
+| 2:30 PM - 3:30 PM  |   Stellarscope downstream |  |
 | 3.30 PM - 4.00 PM  |   Chinese Tea and Biscuits  |  |
 | 4:00 PM - 5:00 PM  |   De novo cell-type annotation |  |
 | 5:00 PM - TBD: Highline walk (optional)  |  |
